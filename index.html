@@ -137,7 +137,7 @@
   </div>
 
   <script>
-    const supabaseUrl = 'https://sceovigzizwufxxdwmk.supabase.co';
+    const supabaseUrl = 'https://scoeovigzizwufxxdwmk.supabase.co';
     const supabaseKey = 'sb_publishable_v_G_lT7-22fyG6gurTUSsw_Ks_vgcOo';
 
     const statusEl = document.getElementById('status');
@@ -215,13 +215,7 @@
 
         if (!response.ok) {
           setStatus(`HTTP error: ${response.status} ${response.statusText}`, 'error');
-
-          tableBody.innerHTML = `
-            <tr>
-              <td colspan="3">Request failed. See debug output below.</td>
-            </tr>
-          `;
-
+          tableBody.innerHTML = `<tr><td colspan="3">Request failed. See debug output below.</td></tr>`;
           setDebug({
             ok: false,
             status: response.status,
@@ -233,11 +227,7 @@
 
         if (!Array.isArray(parsed)) {
           setStatus('Unexpected response format', 'error');
-          tableBody.innerHTML = `
-            <tr>
-              <td colspan="3">Unexpected response format. See debug output.</td>
-            </tr>
-          `;
+          tableBody.innerHTML = `<tr><td colspan="3">Unexpected response format. See debug output.</td></tr>`;
           setDebug({
             ok: true,
             butUnexpectedFormat: true,
@@ -248,11 +238,7 @@
 
         if (parsed.length === 0) {
           setStatus('Connected, but no rows were returned.', 'warn');
-          tableBody.innerHTML = `
-            <tr>
-              <td colspan="3">No records found.</td>
-            </tr>
-          `;
+          tableBody.innerHTML = `<tr><td colspan="3">No records found.</td></tr>`;
           setDebug({
             ok: true,
             rowsReturned: 0,
@@ -289,17 +275,11 @@
         }
 
         setStatus('Fetch error: ' + message, 'error');
-
-        tableBody.innerHTML = `
-          <tr>
-            <td colspan="3">No data shown.</td>
-          </tr>
-        `;
-
+        tableBody.innerHTML = `<tr><td colspan="3">No data shown.</td></tr>`;
         setDebug({
           errorName: err.name,
           errorMessage: err.message,
-          suggestion: 'If this timed out, check policy, API access, CORS, or browser/network blocking.'
+          suggestion: 'If this still fails now, we are into key, policy, or API settings rather than the URL.'
         });
 
         addLog('Fetch failed: ' + err.name + ' - ' + err.message);
