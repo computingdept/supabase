@@ -106,32 +106,45 @@
     </div>
   </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
     const supabaseUrl = 'https://sceovigzizwufxxdwmk.supabase.co';
-    const supabaseKey = 'sb_publishable_v_G_lT7-22fyG6gurTUSsw_Ks_vgcOo';
+    const supabaseKey = 'PASTE_YOUR_SB_PUBLISHABLE_KEY_HERE';
 
     const statusEl = document.getElementById('status');
     const tableBody = document.getElementById('table-body');
 
-    const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
-
     async function loadStudents() {
-      try {
-        const { data, error } = await supabase
-          .from('students')
-          .select('id, name, score')
-          .order('id', { ascending: true });
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 15000);
 
-        if (error) {
+      try {
+        const response = await fetch(
+          `${supabaseUrl}/rest/v1/students?select=id,name,score&order=id.asc`,
+          {
+            method: 'GET',
+            headers: {
+              'apikey': supabaseKey,
+              'Authorization': `Bearer ${supabaseKey}`,
+              'Accept': 'application/json'
+            },
+            signal: controller.signal
+          }
+        );
+
+        clearTimeout(timeoutId);
+
+        if (!response.ok) {
+          const errorText = await response.text();
           statusEl.className = 'error';
-          statusEl.textContent = 'Error loading data: ' + error.message;
-          tableBody.innerHTML = '<tr><td colspan="3">No data shown</td></tr>';
-          console.error(error);
+          statusEl.textContent = `Error loading data: ${response.status} ${response.statusText}`;
+          tableBody.innerHTML = `<tr><td colspan="3">${errorText || 'No data shown'}</td></tr>`;
+          console.error('HTTP error:', response.status, response.statusText, errorText);
           return;
         }
 
-        if (!data || data.length === 0) {
+        const data = await response.json();
+
+        if (!Array.isArray(data) || data.length === 0) {
           statusEl.className = '';
           statusEl.textContent = 'Connected, but no rows were returned.';
           tableBody.innerHTML = '<tr><td colspan="3">No records found</td></tr>';
@@ -139,7 +152,7 @@
         }
 
         statusEl.className = 'success';
-        statusEl.textContent = 'Loaded ' + data.length + ' student record(s).';
+        statusEl.textContent = `Loaded ${data.length} student record(s).`;
 
         tableBody.innerHTML = '';
 
@@ -153,10 +166,11 @@
           tableBody.appendChild(tr);
         });
       } catch (err) {
+        clearTimeout(timeoutId);
         statusEl.className = 'error';
-        statusEl.textContent = 'Error loading data: ' + err.message;
+        statusEl.textContent = `Error loading data: ${err.name === 'AbortError' ? 'Request timed out' : err.message}`;
         tableBody.innerHTML = '<tr><td colspan="3">No data shown</td></tr>';
-        console.error(err);
+        console.error('Fetch error:', err);
       }
     }
 
