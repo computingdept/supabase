@@ -1,10 +1,36 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!--
+    HTML:
+    HTML is used to build the structure of a webpage.
+    It creates the headings, boxes, inputs, buttons and tables.
+
+    Think of HTML like the skeleton of the page.
+    It gives everything a place.
+  -->
   <title>Students</title>
+
   <style>
+    /*
+      CSS:
+      CSS controls how the page looks.
+
+      HTML builds the structure.
+      CSS adds the style.
+
+      It changes:
+      - colours
+      - spacing
+      - fonts
+      - borders
+      - layout
+    */
+
     body {
       font-family: Arial, sans-serif;
       margin: 0;
@@ -115,9 +141,18 @@
   </style>
 </head>
 <body>
+  <!--
+    This is the visible part of the page.
+    Everything inside <body> appears on screen.
+  -->
+
   <div class="container">
     <h1>Students</h1>
 
+    <!--
+      This box lets the user add a new student.
+      The user types a name and a score, then clicks the button.
+    -->
     <div class="card">
       <h2>Add a New Student</h2>
       <div id="insert-status" class="warn">Enter a name and score, then click the button.</div>
@@ -140,11 +175,22 @@
       </div>
     </div>
 
+    <!--
+      This box shows messages such as:
+      - loading
+      - success
+      - errors
+    -->
     <div class="card">
       <div id="status" class="warn">Loading students...</div>
       <div id="log"></div>
     </div>
 
+    <!--
+      This is the table where the live data will appear.
+      At first it just shows a placeholder row.
+      JavaScript will replace that with real data from Supabase.
+    -->
     <div class="card">
       <h2>Students Table</h2>
       <table>
@@ -163,6 +209,10 @@
       </table>
     </div>
 
+    <!--
+      This debug box helps us see what the program received.
+      It is useful when testing.
+    -->
     <div class="card">
       <h2>Debug Output</h2>
       <pre id="debug">Nothing yet.</pre>
@@ -170,9 +220,44 @@
   </div>
 
   <script>
+    /*
+      JAVASCRIPT:
+      JavaScript makes the webpage do things.
+
+      HTML builds the page.
+      CSS styles the page.
+      JavaScript adds behaviour.
+    */
+
+    /*
+      This is the URL of the Supabase project.
+      It is the internet address of the database service.
+    */
     const supabaseUrl = 'https://scoeovigzizwufxxdwmk.supabase.co';
+
+    /*
+      This is the publishable API key.
+
+      API:
+      An API is a way for one program to talk to another.
+
+      In this project:
+      - the webpage is one program
+      - Supabase is another program
+      - the API is the way they communicate
+
+      The key tells Supabase which project this webpage belongs to.
+
+      Important:
+      - publishable key = okay to use in frontend code
+      - secret key = never put in frontend code
+    */
     const supabaseKey = 'sb_publishable_v_G_lT7-22fyG6gurTUSsw_Ks_vgcOo';
 
+    /*
+      Here we store links to parts of the HTML page.
+      This means JavaScript can change them later.
+    */
     const statusEl = document.getElementById('status');
     const logEl = document.getElementById('log');
     const tableBody = document.getElementById('table-body');
@@ -182,16 +267,34 @@
     const studentNameInput = document.getElementById('student-name');
     const studentScoreInput = document.getElementById('student-score');
 
+    /*
+      This changes the main status message.
+      Example:
+      - Loading...
+      - Success
+      - Error
+    */
     function setStatus(message, className = 'warn') {
       statusEl.textContent = message;
       statusEl.className = className;
     }
 
+    /*
+      This changes the insert form status message.
+      Example:
+      - Adding student...
+      - Added successfully
+      - Insert failed
+    */
     function setInsertStatus(message, className = 'warn') {
       insertStatusEl.textContent = message;
       insertStatusEl.className = className;
     }
 
+    /*
+      This adds a line to the log box.
+      It helps show what the code is doing step by step.
+    */
     function addLog(message) {
       const div = document.createElement('div');
       div.className = 'log-line';
@@ -199,17 +302,71 @@
       logEl.appendChild(div);
     }
 
+    /*
+      This prints extra information into the debug box.
+      If an object is passed in, it is turned into JSON text.
+
+      JSON:
+      JSON stands for JavaScript Object Notation.
+      It is a common format used to send structured data.
+
+      Example JSON:
+      [
+        { "id": 1, "name": "Alice", "score": 82 },
+        { "id": 2, "name": "Ben", "score": 74 }
+      ]
+    */
     function setDebug(obj) {
       debugEl.textContent = typeof obj === 'string' ? obj : JSON.stringify(obj, null, 2);
     }
 
+    /*
+      ASYNCHRONOUS CODE:
+      Talking to a server takes time.
+      The browser has to wait for a reply across the internet.
+
+      That is why we use:
+      - async
+      - await
+
+      async means:
+      "this function will do something that may take time"
+
+      await means:
+      "wait here until the result comes back"
+
+      This is important when fetching data from an API.
+    */
     async function loadStudents() {
       try {
+        /*
+          This sends a GET request to Supabase.
+
+          GET means:
+          "please send me some data"
+
+          The URL asks for:
+          - the students table
+          - only the id, name and score columns
+          - ordered by id
+        */
         const response = await fetch(
           `${supabaseUrl}/rest/v1/students?select=id,name,score&order=id.asc`,
           {
             method: 'GET',
             headers: {
+              /*
+                These headers go with the request.
+
+                apikey:
+                identifies the Supabase project
+
+                Authorization:
+                sends the key as a bearer token
+
+                Accept:
+                tells the server we want JSON back
+              */
               apikey: supabaseKey,
               Authorization: `Bearer ${supabaseKey}`,
               Accept: 'application/json'
@@ -217,21 +374,34 @@
           }
         );
 
+        /*
+          The server sends back text.
+          Often this text is JSON.
+        */
         const text = await response.text();
         let data;
 
         try {
+          /*
+            JSON.parse converts JSON text into usable JavaScript data.
+          */
           data = JSON.parse(text);
         } catch {
           data = null;
         }
 
+        /*
+          If the request failed, show an error.
+        */
         if (!response.ok) {
           setStatus(`GET failed: ${response.status} ${response.statusText}`, 'error');
           setDebug(text);
           return;
         }
 
+        /*
+          If there are no rows, show a warning.
+        */
         if (!Array.isArray(data) || data.length === 0) {
           setStatus('Connected, but no rows were returned.', 'warn');
           tableBody.innerHTML = '<tr><td colspan="3">No records found.</td></tr>';
@@ -239,9 +409,15 @@
           return;
         }
 
+        /*
+          If data came back properly, show success.
+        */
         setStatus(`Loaded ${data.length} row(s).`, 'ok');
         tableBody.innerHTML = '';
 
+        /*
+          Loop through each row and create a table row in HTML.
+        */
         data.forEach(row => {
           const tr = document.createElement('tr');
           tr.innerHTML = `
@@ -254,15 +430,33 @@
 
         setDebug(data);
       } catch (err) {
+        /*
+          This catches problems such as:
+          - wrong URL
+          - server not reachable
+          - browser/network problems
+        */
         setStatus('Fetch error: ' + err.message, 'error');
         setDebug({ error: err.message });
       }
     }
 
+    /*
+      This function adds a new student.
+
+      It sends a POST request.
+
+      POST means:
+      "I want to send new data to the server"
+    */
     async function addStudent() {
       const name = studentNameInput.value.trim();
       const score = Number(studentScoreInput.value);
 
+      /*
+        Simple validation:
+        Check the user typed something sensible before sending.
+      */
       if (!name) {
         setInsertStatus('Please enter a name.', 'error');
         return;
@@ -277,6 +471,14 @@
       setInsertStatus('Adding student...', 'warn');
 
       try {
+        /*
+          This sends the new student to Supabase.
+
+          Content-Type: application/json
+          means the body of the request will be JSON.
+
+          JSON.stringify converts JavaScript data into JSON text.
+        */
         const response = await fetch(`${supabaseUrl}/rest/v1/students`, {
           method: 'POST',
           headers: {
@@ -297,12 +499,21 @@
           data = text;
         }
 
+        /*
+          If the insert failed, show the error.
+        */
         if (!response.ok) {
           setInsertStatus(`Insert failed: ${response.status} ${response.statusText}`, 'error');
           setDebug(data);
           return;
         }
 
+        /*
+          If the insert worked:
+          - show success
+          - clear the boxes
+          - reload the students table
+        */
         setInsertStatus(`Added ${name} successfully.`, 'ok');
         studentNameInput.value = '';
         studentScoreInput.value = '';
@@ -311,11 +522,24 @@
         setInsertStatus('Insert error: ' + err.message, 'error');
         setDebug({ error: err.message });
       } finally {
+        /*
+          finally runs whether the request worked or failed.
+          It turns the button back on.
+        */
         addStudentBtn.disabled = false;
       }
     }
 
+    /*
+      Event listener:
+      This means:
+      "when the button is clicked, run the addStudent function"
+    */
     addStudentBtn.addEventListener('click', addStudent);
+
+    /*
+      Start by loading the existing students when the page opens.
+    */
     loadStudents();
   </script>
 </body>
