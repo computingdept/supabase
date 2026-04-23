@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -7,30 +6,54 @@
 
   <!--
     HTML:
-    HTML is used to build the structure of a webpage.
-    It creates the headings, boxes, inputs, buttons and tables.
+    HTML is the language used to build the structure of a webpage.
 
-    Think of HTML like the skeleton of the page.
-    It gives everything a place.
+    You can think of HTML like the frame of a building.
+    It decides what parts exist on the page:
+    - headings
+    - paragraphs
+    - buttons
+    - tables
+    - input boxes
+
+    The browser reads the HTML from top to bottom.
   -->
   <title>Students</title>
 
   <style>
     /*
       CSS:
-      CSS controls how the page looks.
+      CSS is used to control how the page LOOKS.
 
-      HTML builds the structure.
-      CSS adds the style.
+      HTML creates the parts.
+      CSS styles the parts.
 
-      It changes:
-      - colours
+      CSS can change:
+      - colour
+      - size
       - spacing
-      - fonts
       - borders
       - layout
+      - alignment
+
+      A CSS rule has:
+      selector {
+        property: value;
+      }
+
+      Example:
+      body {
+        background: #f7f7f7;
+      }
+
+      This means:
+      "find the body element and give it this background colour"
     */
 
+    /*
+      The body selector styles the whole visible page.
+      This is a good place to set the default font and page spacing.
+    */
     body {
       font-family: Arial, sans-serif;
       margin: 0;
@@ -39,11 +62,27 @@
       color: #222;
     }
 
+    /*
+      .container means "any element with class='container'"
+
+      This is used to keep the page content centred and stop it becoming too wide.
+      max-width means the content can grow up to 1000px wide but no wider.
+      margin: 0 auto centres it on the page.
+    */
     .container {
       max-width: 1000px;
       margin: 0 auto;
     }
 
+    /*
+      .card creates the white boxes on the page.
+      This gives them:
+      - white background
+      - light border
+      - rounded corners
+      - padding inside
+      - space underneath
+    */
     .card {
       background: #fff;
       border: 1px solid #d9d9d9;
@@ -52,19 +91,45 @@
       margin-bottom: 20px;
     }
 
+    /*
+      h1, h2 means style both heading levels together.
+      margin-top: 0 removes the default gap above headings.
+    */
     h1, h2 {
       margin-top: 0;
     }
 
+    /*
+      These are the main status messages.
+      font-weight: bold makes them stand out more clearly.
+    */
     #status, #insert-status {
       font-weight: bold;
       margin-bottom: 12px;
     }
 
+    /*
+      These classes are used to colour text depending on meaning.
+      They are applied by JavaScript.
+
+      .ok    = success
+      .warn  = warning
+      .error = problem
+    */
     .ok { color: #0a7a33; }
     .warn { color: #9a6700; }
     .error { color: #b00020; }
 
+    /*
+      .form-row uses flexbox.
+
+      Flexbox is a layout system for arranging items in a row or column.
+      Here it makes the input boxes and button sit next to each other.
+
+      gap adds space between them.
+      flex-wrap allows them to move onto another line on smaller screens.
+      align-items: end lines them up nicely at the bottom.
+    */
     .form-row {
       display: flex;
       gap: 12px;
@@ -73,6 +138,10 @@
       margin-top: 10px;
     }
 
+    /*
+      .field is used for each label/input pair.
+      display: flex and flex-direction: column put the label above the input.
+    */
     .field {
       display: flex;
       flex-direction: column;
@@ -80,6 +149,11 @@
       min-width: 220px;
     }
 
+    /*
+      This styles all input boxes.
+      padding gives space inside the box.
+      border-radius rounds the corners slightly.
+    */
     input {
       padding: 10px;
       border: 1px solid #ccc;
@@ -87,6 +161,10 @@
       font-size: 1rem;
     }
 
+    /*
+      This styles all buttons on the page.
+      cursor: pointer makes the mouse show a hand when hovering.
+    */
     button {
       padding: 12px 18px;
       border: none;
@@ -98,26 +176,49 @@
       cursor: pointer;
     }
 
+    /*
+      :hover means "when the mouse is over the button"
+      This makes the button darker when hovered over.
+    */
     button:hover {
       background: #1d4ed8;
     }
 
+    /*
+      This styles the table.
+      border-collapse: collapse joins borders together into neat single lines.
+      width: 100% makes the table stretch across the box.
+    */
     table {
       width: 100%;
       border-collapse: collapse;
       margin-top: 10px;
     }
 
+    /*
+      th = table heading cell
+      td = table data cell
+
+      These rules style both types of table cells.
+    */
     th, td {
       border: 1px solid #ccc;
       padding: 10px 12px;
       text-align: left;
     }
 
+    /*
+      This gives the heading row a light grey background.
+    */
     th {
       background: #f2f2f2;
     }
 
+    /*
+      pre is used for the debug box.
+      It keeps spacing and line breaks exactly as written.
+      Useful for showing JSON or debug text.
+    */
     pre {
       white-space: pre-wrap;
       word-break: break-word;
@@ -128,6 +229,10 @@
       margin: 0;
     }
 
+    /*
+      Each log line gets a small border underneath
+      so they look like separate steps.
+    */
     .log-line {
       padding: 4px 0;
       border-bottom: 1px solid #eee;
@@ -142,16 +247,27 @@
 </head>
 <body>
   <!--
-    This is the visible part of the page.
-    Everything inside <body> appears on screen.
+    BODY:
+    Everything inside the <body> is what appears on the webpage.
+
+    The page is divided into sections using <div> boxes.
+    Each card is a clear area with a different job.
   -->
 
   <div class="container">
+    <!--
+      Main page heading.
+      There should usually only be one h1 on a page.
+    -->
     <h1>Students</h1>
 
     <!--
-      This box lets the user add a new student.
-      The user types a name and a score, then clicks the button.
+      CARD 1:
+      This section lets the user add a new student.
+
+      label = text telling the user what the box is for
+      input = box where the user types
+      button = clickable control to run code
     -->
     <div class="card">
       <h2>Add a New Student</h2>
@@ -176,10 +292,11 @@
     </div>
 
     <!--
-      This box shows messages such as:
-      - loading
-      - success
-      - errors
+      CARD 2:
+      This shows status updates and the step-by-step log.
+
+      The log is useful for debugging because it shows
+      what the program has done so far.
     -->
     <div class="card">
       <div id="status" class="warn">Loading students...</div>
@@ -187,9 +304,13 @@
     </div>
 
     <!--
-      This is the table where the live data will appear.
-      At first it just shows a placeholder row.
-      JavaScript will replace that with real data from Supabase.
+      CARD 3:
+      This is the data table.
+
+      thead = table heading section
+      tbody = table body section
+
+      JavaScript will replace the starting row with real rows from Supabase.
     -->
     <div class="card">
       <h2>Students Table</h2>
@@ -210,8 +331,9 @@
     </div>
 
     <!--
-      This debug box helps us see what the program received.
-      It is useful when testing.
+      CARD 4:
+      This debug box is useful during development.
+      It can show returned JSON or errors.
     -->
     <div class="card">
       <h2>Debug Output</h2>
@@ -222,16 +344,18 @@
   <script>
     /*
       JAVASCRIPT:
-      JavaScript makes the webpage do things.
+      JavaScript makes the webpage interactive.
 
-      HTML builds the page.
-      CSS styles the page.
-      JavaScript adds behaviour.
+      It can:
+      - react to button clicks
+      - send requests to an API
+      - update HTML on the page
+      - show returned data
     */
 
     /*
       This is the URL of the Supabase project.
-      It is the internet address of the database service.
+      It is the address the webpage will contact.
     */
     const supabaseUrl = 'https://scoeovigzizwufxxdwmk.supabase.co';
 
@@ -239,24 +363,20 @@
       This is the publishable API key.
 
       API:
-      An API is a way for one program to talk to another.
+      An API is a way for one program to talk to another program.
 
-      In this project:
-      - the webpage is one program
-      - Supabase is another program
-      - the API is the way they communicate
+      In this case:
+      - the webpage talks to Supabase
+      - Supabase sends back data
 
-      The key tells Supabase which project this webpage belongs to.
-
-      Important:
-      - publishable key = okay to use in frontend code
-      - secret key = never put in frontend code
+      This is a publishable key, not a secret key.
+      A publishable key is okay to use in frontend code.
     */
-    const supabaseKey = 'sb_publishable_v_G_lT7-22fyG6gurTUSsw_Ks_vgcOo';
+    const supabaseKey = 'PASTE_YOUR_SB_PUBLISHABLE_KEY_HERE';
 
     /*
-      Here we store links to parts of the HTML page.
-      This means JavaScript can change them later.
+      document.getElementById finds specific HTML elements by their id.
+      We store them in variables so we can update them later.
     */
     const statusEl = document.getElementById('status');
     const logEl = document.getElementById('log');
@@ -268,11 +388,7 @@
     const studentScoreInput = document.getElementById('student-score');
 
     /*
-      This changes the main status message.
-      Example:
-      - Loading...
-      - Success
-      - Error
+      This updates the main status message.
     */
     function setStatus(message, className = 'warn') {
       statusEl.textContent = message;
@@ -280,11 +396,7 @@
     }
 
     /*
-      This changes the insert form status message.
-      Example:
-      - Adding student...
-      - Added successfully
-      - Insert failed
+      This updates the message for the insert form.
     */
     function setInsertStatus(message, className = 'warn') {
       insertStatusEl.textContent = message;
@@ -292,8 +404,7 @@
     }
 
     /*
-      This adds a line to the log box.
-      It helps show what the code is doing step by step.
+      This adds a line into the log box.
     */
     function addLog(message) {
       const div = document.createElement('div');
@@ -303,18 +414,17 @@
     }
 
     /*
-      This prints extra information into the debug box.
-      If an object is passed in, it is turned into JSON text.
-
       JSON:
       JSON stands for JavaScript Object Notation.
-      It is a common format used to send structured data.
+      It is a common way to send structured data.
 
-      Example JSON:
+      Example:
       [
         { "id": 1, "name": "Alice", "score": 82 },
         { "id": 2, "name": "Ben", "score": 74 }
       ]
+
+      This function prints JSON or text into the debug box.
     */
     function setDebug(obj) {
       debugEl.textContent = typeof obj === 'string' ? obj : JSON.stringify(obj, null, 2);
@@ -322,33 +432,26 @@
 
     /*
       ASYNCHRONOUS CODE:
-      Talking to a server takes time.
-      The browser has to wait for a reply across the internet.
-
-      That is why we use:
-      - async
-      - await
+      Requests across the internet take time.
 
       async means:
-      "this function will do something that may take time"
+      "this function includes work that may take time"
 
       await means:
-      "wait here until the result comes back"
+      "pause here until the result comes back"
 
-      This is important when fetching data from an API.
+      This stops the code from trying to use data before it arrives.
     */
     async function loadStudents() {
       try {
         /*
-          This sends a GET request to Supabase.
+          GET request:
+          GET means "please send me data"
 
-          GET means:
-          "please send me some data"
-
-          The URL asks for:
+          This URL asks Supabase for:
           - the students table
           - only the id, name and score columns
-          - ordered by id
+          - in ascending order by id
         */
         const response = await fetch(
           `${supabaseUrl}/rest/v1/students?select=id,name,score&order=id.asc`,
@@ -356,16 +459,7 @@
             method: 'GET',
             headers: {
               /*
-                These headers go with the request.
-
-                apikey:
-                identifies the Supabase project
-
-                Authorization:
-                sends the key as a bearer token
-
-                Accept:
-                tells the server we want JSON back
+                headers are extra pieces of information sent with the request
               */
               apikey: supabaseKey,
               Authorization: `Bearer ${supabaseKey}`,
@@ -374,34 +468,24 @@
           }
         );
 
-        /*
-          The server sends back text.
-          Often this text is JSON.
-        */
         const text = await response.text();
         let data;
 
         try {
           /*
-            JSON.parse converts JSON text into usable JavaScript data.
+            JSON.parse turns JSON text into JavaScript data.
           */
           data = JSON.parse(text);
         } catch {
           data = null;
         }
 
-        /*
-          If the request failed, show an error.
-        */
         if (!response.ok) {
           setStatus(`GET failed: ${response.status} ${response.statusText}`, 'error');
           setDebug(text);
           return;
         }
 
-        /*
-          If there are no rows, show a warning.
-        */
         if (!Array.isArray(data) || data.length === 0) {
           setStatus('Connected, but no rows were returned.', 'warn');
           tableBody.innerHTML = '<tr><td colspan="3">No records found.</td></tr>';
@@ -409,14 +493,11 @@
           return;
         }
 
-        /*
-          If data came back properly, show success.
-        */
         setStatus(`Loaded ${data.length} row(s).`, 'ok');
         tableBody.innerHTML = '';
 
         /*
-          Loop through each row and create a table row in HTML.
+          Loop through the returned rows and build HTML table rows.
         */
         data.forEach(row => {
           const tr = document.createElement('tr');
@@ -430,32 +511,26 @@
 
         setDebug(data);
       } catch (err) {
-        /*
-          This catches problems such as:
-          - wrong URL
-          - server not reachable
-          - browser/network problems
-        */
         setStatus('Fetch error: ' + err.message, 'error');
         setDebug({ error: err.message });
       }
     }
 
     /*
-      This function adds a new student.
+      POST request:
+      POST means "I want to send new data"
 
-      It sends a POST request.
-
-      POST means:
-      "I want to send new data to the server"
+      This function reads what the user typed,
+      sends it to Supabase,
+      then reloads the table.
     */
     async function addStudent() {
       const name = studentNameInput.value.trim();
       const score = Number(studentScoreInput.value);
 
       /*
-        Simple validation:
-        Check the user typed something sensible before sending.
+        Validation:
+        Check the input before sending it.
       */
       if (!name) {
         setInsertStatus('Please enter a name.', 'error');
@@ -471,14 +546,6 @@
       setInsertStatus('Adding student...', 'warn');
 
       try {
-        /*
-          This sends the new student to Supabase.
-
-          Content-Type: application/json
-          means the body of the request will be JSON.
-
-          JSON.stringify converts JavaScript data into JSON text.
-        */
         const response = await fetch(`${supabaseUrl}/rest/v1/students`, {
           method: 'POST',
           headers: {
@@ -487,6 +554,11 @@
             'Content-Type': 'application/json',
             Prefer: 'return=representation'
           },
+
+          /*
+            JSON.stringify converts JavaScript data into JSON text
+            so it can be sent to the server.
+          */
           body: JSON.stringify([{ name, score }])
         });
 
@@ -499,32 +571,31 @@
           data = text;
         }
 
-        /*
-          If the insert failed, show the error.
-        */
         if (!response.ok) {
           setInsertStatus(`Insert failed: ${response.status} ${response.statusText}`, 'error');
           setDebug(data);
           return;
         }
 
-        /*
-          If the insert worked:
-          - show success
-          - clear the boxes
-          - reload the students table
-        */
         setInsertStatus(`Added ${name} successfully.`, 'ok');
+
+        /*
+          Clear the boxes after a successful insert.
+        */
         studentNameInput.value = '';
         studentScoreInput.value = '';
+
+        /*
+          Reload the table so the new row appears.
+        */
         await loadStudents();
       } catch (err) {
         setInsertStatus('Insert error: ' + err.message, 'error');
         setDebug({ error: err.message });
       } finally {
         /*
-          finally runs whether the request worked or failed.
-          It turns the button back on.
+          finally always runs at the end,
+          whether the request worked or failed
         */
         addStudentBtn.disabled = false;
       }
@@ -532,13 +603,12 @@
 
     /*
       Event listener:
-      This means:
-      "when the button is clicked, run the addStudent function"
+      When the button is clicked, run addStudent()
     */
     addStudentBtn.addEventListener('click', addStudent);
 
     /*
-      Start by loading the existing students when the page opens.
+      Start by loading the students when the page opens.
     */
     loadStudents();
   </script>
